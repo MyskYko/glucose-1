@@ -114,6 +114,7 @@ public:
     void    toDimacs     (const char* file, Lit p);
     void    toDimacs     (const char* file, Lit p, Lit q);
     void    toDimacs     (const char* file, Lit p, Lit q, Lit r);
+    void    toDimacs     (const char* file, const vec<Lit>& assumps, vec<Var> &map);
  
     // Display clauses and literals
     void printLit(Lit l);

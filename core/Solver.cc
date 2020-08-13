@@ -1613,6 +1613,53 @@ void Solver::toDimacs(FILE* f, const vec<Lit>& assumps) {
         printf("Wrote %d clauses with %d variables.\n", cnt, max);
 }
 
+void Solver::toDimacs(const char* file, const vec<Lit>& assumps, vec<Var> &map) {
+    FILE* f = fopen(file, "wr");
+    if (f == NULL)
+        fprintf(stderr, "could not open file %s\n", file), exit(1);
+
+    // Handle case when solver is in contradictory state:
+    if (!ok) {
+        fprintf(f, "p cnf 1 2\n1 0\n-1 0\n");
+        return;
+    }
+
+    Var max = 0;
+
+    // Cannot use removeClauses here because it is not safe
+    // to deallocate them at this point. Could be improved.
+    int cnt = 0;
+    for (int i = 0; i < clauses.size(); i++)
+        if (!satisfied(ca[clauses[i]]))
+            cnt++;
+
+    for (int i = 0; i < clauses.size(); i++)
+        if (!satisfied(ca[clauses[i]])) {
+            Clause& c = ca[clauses[i]];
+            for (int j = 0; j < c.size(); j++)
+                if (value(c[j]) != l_False)
+                    mapVar(var(c[j]), map, max);
+        }
+
+    // Assumptions are added as unit clauses:
+    cnt += assumptions.size();
+
+    fprintf(f, "p cnf %d %d\n", max, cnt);
+
+    for (int i = 0; i < assumptions.size(); i++) {
+        assert(value(assumptions[i]) != l_False);
+        fprintf(f, "%s%d 0\n", sign(assumptions[i]) ? "-" : "", mapVar(var(assumptions[i]), map, max) + 1);
+    }
+
+    for (int i = 0; i < clauses.size(); i++)
+        toDimacs(f, ca[clauses[i]], map, max);
+
+    if (verbosity > 0)
+        printf("Wrote %d clauses with %d variables.\n", cnt, max);
+
+    fclose(f);
+}
+
 
 //=================================================================================================
 // Garbage Collection methods:
