@@ -1613,11 +1613,7 @@ void Solver::toDimacs(FILE* f, const vec<Lit>& assumps) {
         printf("Wrote %d clauses with %d variables.\n", cnt, max);
 }
 
-void Solver::toDimacs(const char* file, const vec<Lit>& assumps, vec<Var> &map) {
-    FILE* f = fopen(file, "wr");
-    if (f == NULL)
-        fprintf(stderr, "could not open file %s\n", file), exit(1);
-
+void Solver::toDimacs(FILE* f, const vec<Lit>& assumps, vec<Var> &map) {
     // Handle case when solver is in contradictory state:
     if (!ok) {
         fprintf(f, "p cnf 1 2\n1 0\n-1 0\n");
@@ -1656,8 +1652,6 @@ void Solver::toDimacs(const char* file, const vec<Lit>& assumps, vec<Var> &map) 
 
     if (verbosity > 0)
         printf("Wrote %d clauses with %d variables.\n", cnt, max);
-
-    fclose(f);
 }
 
 
