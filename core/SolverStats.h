@@ -1,4 +1,5 @@
- Glucose -- Copyright (c) 2009-2017, Gilles Audemard, Laurent Simon
+/***************************************************************************************[Solver.h]
+ Glucose -- Copyright (c) 2009-2014, Gilles Audemard, Laurent Simon
                                 CRIL - Univ. Artois, France
                                 LRI  - Univ. Paris Sud, France (2009-2013)
                                 Labri - Univ. Bordeaux, France
@@ -44,4 +45,55 @@ NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPO
 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
 OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ **************************************************************************************************/
+
+#ifndef SOLVERSTATS_H
+#define	SOLVERSTATS_H
+
+#include "mtl/Map.h"
+#include <string>
+namespace Glucose {
+
+    class SolverStats {
+    protected:
+        Map<std::string, uint64_t> map;
+
+    public:
+
+        SolverStats(std::string all[],int sz) : map() {
+            addStats(all,sz);
+        }
+
+        void addStats(std::string names[],int sz) {
+            for(int i = 0;i<sz;i++)
+                addStat(names[i]);
+        }
+        
+        void addStat(std::string name) {
+            map.insert(name, 0);
+        }
+
+        const uint64_t& operator [] (const std::string name) const {
+            return map[name];
+        }
+
+         uint64_t& operator [] (const std::string name)  {
+            return map[name];
+        }
+
+        void maximize(const std::string name,uint64_t val) {
+            if(val > map[name])
+                map[name] = val;
+        } 
+         
+        void minimize(const std::string name,uint64_t val) {
+            if(val < map[name])
+                map[name] = val;
+        } 
+
+};
+
+}
+
+#endif	/* SOLVERSTATS_H */
 
