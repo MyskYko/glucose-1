@@ -5,6 +5,7 @@ project(glucose)
 option(BUILD_SHARED_LIBS OFF "True for building shared object")
 
 set(CMAKE_CXX_FLAGS "-std=c++11")
+add_compile_options(-DNDEBUG -DINCREMENTAL)
 
 # Dependencies {{{
 find_package(ZLIB REQUIRED)
